@@ -1,0 +1,6 @@
+{
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "notebook.defaultFormatter": "charliermarsh.ruff",
+    "notebook.formatOnSave.enabled": true,
+    "editor.formatOnSave": true
+}
