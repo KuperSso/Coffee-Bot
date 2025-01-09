@@ -14,8 +14,7 @@ class RegistrationMiddleware(BaseMiddleware):
         if hasattr(event, "message") and isinstance(event.message, Message):
             user_id = event.message.from_user.id
             user = await get_user(user_id)
-
-            data["is registered"] = user is not None
             data["user"] = user
+            data["is_registered"] = user is not None
 
         return await handler(event, data)

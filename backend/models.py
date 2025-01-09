@@ -10,13 +10,14 @@ class User(Base):
     tg_id = Column(BigInteger, unique=True, nullable=False)
     is_admin = Column(Boolean, default=False, nullable=False)
     is_superuser = Column(Boolean, default=False, nullable=False)
+    buy_coffe = Column(Integer, default=0, nullable=False)
 
 
-class Order(Base):
-    __tablename__ = "orders"
+# class Order(Base):
+# __tablename__ = "orders"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
-    is_used = Column(Boolean, default=False, nullable=False)
+# id = Column(Integer, primary_key=True, autoincrement=True)
+# user_id = Column(
+#     Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+# )
+# is_used = Column(Boolean, default=False, nullable=False)
