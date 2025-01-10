@@ -1,6 +1,6 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
-from requests_bot import get_user
+from queries import get_user
 from typing import Optional
 
 

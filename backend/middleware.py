@@ -1,7 +1,7 @@
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from typing import Callable, Dict, Any, Awaitable
 from aiogram.types import Message, Update
-from requests_bot import get_user
+from queries import get_user
 
 
 class RegistrationMiddleware(BaseMiddleware):

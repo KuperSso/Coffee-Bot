@@ -6,7 +6,6 @@ not_registered = ReplyKeyboardMarkup(
             KeyboardButton(
                 text="Регистрация",
                 request_contact=True,
-                # input_field_placeholder="Тапни на кнопку ниже!",
             )
         ]
     ],
