@@ -29,6 +29,7 @@ menu_admin = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="Добавить Кофе")],
         [KeyboardButton(text="Выдать Бесплатный Кофе")],
+        [KeyboardButton(text="Назад")],
     ],
     resize_keyboard=True,
 )
@@ -43,6 +44,7 @@ menu_superuser = ReplyKeyboardMarkup(
             KeyboardButton(text="Добавить Кофе"),
             KeyboardButton(text="Выдать Бесплатный Кофе"),
         ],
+        [KeyboardButton(text="Назад")],
     ],
     resize_keyboard=True,
 )

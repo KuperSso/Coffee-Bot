@@ -1,21 +1,24 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 from queries import get_user
-from typing import Optional
 
 
 class RegistrationFilter(BaseFilter):
-    async def __call__(self, message: Message) -> dict | bool:
+    async def __call__(self, message: Message) -> bool:
         user_id = message.from_user.id
         user = await get_user(user_id)
-        return {"is_registered": user is not None, "user": user}
+        return {"is_registered": bool(user), "user": user}
 
 
 class IsadminFilter(BaseFilter):
-    async def __call__(self, message: Message, user: Optional[dict]) -> bool:
-        return user and getattr(user, "is_admin", False)
+    async def __call__(self, message: Message) -> bool:
+        user_id = message.from_user.id
+        user = await get_user(user_id)
+        return bool(user) and user.is_admin
 
 
 class IsSuperUserFilter(BaseFilter):
-    async def __call__(self, message: Message, user: Optional[dict]) -> bool:
-        return user and getattr(user, "is_superuser", False)
+    async def __call__(self, message: Message) -> bool:
+        user_id = message.from_user.id
+        user = await get_user(user_id)
+        return bool(user) and user.is_superuser
