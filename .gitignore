@@ -3,3 +3,6 @@
 alembic.ini
 pytest.ini
 .test.env
+.vscode
+/__pycache__
+/.pytest_cache

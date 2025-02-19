@@ -3,8 +3,8 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from backend.database import Base, DATABASE_URL
-from backend.models import User
+from backend.database.db import Base, DATABASE_URL
+from backend.database.models import User
 
 from alembic import context
 

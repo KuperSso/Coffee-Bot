@@ -1,7 +1,6 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
-
-from backend.models import User
+from sqlalchemy.ext.asyncio import AsyncSession
+from database.models import User
 from sqlalchemy import select
 
 
@@ -11,8 +10,18 @@ async def add_user(tg_id: int, phone: str, session: AsyncSession) -> None:
     await session.commit()
 
 
-async def get_user(id: int, tg_id: int, session: AsyncSession) -> User | None:
+async def get_user(tg_id: int, session: AsyncSession) -> User | None:
     user = await session.scalar(select(User).where(User.tg_id == tg_id))
+    return user
+
+
+async def get_buy_coffee(tg_id: int, session: AsyncSession) -> User | None:
+    user = await session.scalar(select(User).where(User.tg_id == tg_id))
+    return user.buy_coffe
+
+
+async def get_user_by_phone(phone: str, session: AsyncSession) -> User | None:
+    user = await session.scalar(select(User).where(User.phone == phone))
     return user
 
 

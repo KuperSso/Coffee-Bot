@@ -3,12 +3,13 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
-import queries as rq
+import database.queries as rq
+from database.db import async_session
 import keyboards as kb
 
 from filters import IsadminFilter
 from sms_log import send_log
-from superuser import check_phone
+from handlers.superuser import check_phone
 
 admin_router = Router()
 
@@ -75,13 +76,15 @@ async def process_coffee_count(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     phone = user_data.get("phone")
 
-    success = await rq.add_coffee(phone, buy_coffe)
+    async with async_session() as session:
+        success = await rq.add_coffee(phone, buy_coffe, session=session)
 
     if success:
         await message.answer(
             f"Добавлено {buy_coffe} кофе для пользователя с номером {phone}."
         )
-        user = await rq.get_user_by_phone(phone)
+        async with async_session() as session:
+            user = await rq.get_user_by_phone(phone, session=session)
         if user and user.tg_id:
             try:
                 log_message = (
@@ -140,7 +143,8 @@ async def process_coffee_used(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     phone = user_data.get("phone")
 
-    user = await rq.get_user_by_phone(phone)
+    async with async_session() as session:
+        user = await rq.get_user_by_phone(phone, session=session)
     if not user:
         await message.answer("Пользователь не найден.")
         await state.clear()
@@ -153,8 +157,8 @@ async def process_coffee_used(message: types.Message, state: FSMContext):
         )
         await state.clear()
         return
-
-    success = await rq.used_free_coffe(phone)
+    async with async_session() as session:
+        success = await rq.used_free_coffe(phone, session=session)
 
     if success:
         await message.answer("Выдаю бесплатный кофе...")

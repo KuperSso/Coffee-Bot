@@ -2,8 +2,9 @@ from aiogram import types, Router, F
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from database.db import async_session
 
-import queries as rq
+import database.queries as rq
 import keyboards as kb
 
 from filters import IsSuperUserFilter
@@ -19,10 +20,11 @@ async def check_phone(message: types.Message, state: FSMContext):
             "Введите корректный номер телефона, начинающийся с 8 и длиной 11 цифр.\nПример: 89012345678"
         )
         return None
-
     normalized_phone = phone[1:]
 
-    user = await rq.get_user_by_phone(normalized_phone)
+    async with async_session() as session:
+        user = await rq.get_user_by_phone(normalized_phone, session=session)
+
     if not user:
         await message.answer(
             f"Пользователь с номером {phone} не найден.\nПроверьте правильность введенного номера и повторите попытку!"
@@ -86,7 +88,9 @@ async def add_admin(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     phone = user_data.get("phone")
 
-    user = await rq.get_user_by_phone(phone)
+    async with async_session() as session:
+        user = await rq.get_user_by_phone(phone, session=session)
+
     if not user:
         await message.answer("Пользователь не найден.")
         await state.clear()
@@ -96,14 +100,13 @@ async def add_admin(message: types.Message, state: FSMContext):
         await message.answer("Этот пользователь уже бариста")
         await state.clear()
         return
-
-    success = await rq.add_admin(phone)
+    async with async_session() as session:
+        success = await rq.add_admin(phone, session=session)
 
     if success:
         await message.answer(
             f"Пользователь: {phone} успешно стал баристой, мои соболезнования ему..."
         )
-        user = await rq.get_user_by_phone(phone)
         chat = await message.bot.get_chat(user.tg_id)
         user_first_name = chat.first_name
         if user and user.tg_id:
@@ -153,7 +156,8 @@ async def remove_admin(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     phone = user_data.get("phone")
 
-    user = await rq.get_user_by_phone(phone)
+    async with async_session() as session:
+        user = await rq.get_user_by_phone(phone, session=session)
     if not user:
         await message.answer("Пользователь не найден.")
         await state.clear()
@@ -163,12 +167,11 @@ async def remove_admin(message: types.Message, state: FSMContext):
         await message.answer("Этот пользователь не бариста")
         await state.clear()
         return
-
-    success = await rq.remove_admin(phone)
+    async with async_session() as session:
+        success = await rq.remove_admin(phone, session=session)
 
     if success:
         await message.answer(f"Пользователь: {phone}, успешно уволен!")
-        user = await rq.get_user_by_phone(phone)
         chat = await message.bot.get_chat(user.tg_id)
         user_first_name = chat.first_name
         if user and user.tg_id:

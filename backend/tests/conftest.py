@@ -2,8 +2,10 @@ import os
 import pytest_asyncio
 import pytest
 from dotenv import load_dotenv
+
+from database.db import Base
+
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from backend.database import Base
 from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool
 
@@ -12,7 +14,6 @@ load_dotenv(".test.env")
 ASYNC_DATABASE_URL = os.getenv("TEST_DATABASE_URL")
 async_engine = create_async_engine(ASYNC_DATABASE_URL, poolclass=NullPool)
 
-load_dotenv(".test.env")
 DATABASE_URL = os.getenv("TEST_DATABASE")
 engine = create_engine(DATABASE_URL)
 

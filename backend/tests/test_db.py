@@ -1,9 +1,10 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.models import User
+
+from database.models import User
 from sqlalchemy import select
 
-import tests.requests as rq
+import database.queries as rq
 
 
 @pytest.mark.asyncio
@@ -17,7 +18,25 @@ async def test_add_user(session: AsyncSession):
 async def test_get_user(session: AsyncSession):
     user = User(tg_id=10203040, phone="9187777442")
     session.add(user)
-    assert await rq.get_user(user.id, tg_id=10203040, session=session)
+    assert await rq.get_user(tg_id=10203040, session=session)
+
+
+@pytest.mark.asyncio
+async def test_get_buy_coffee(session: AsyncSession):
+    user = User(tg_id=10203040, phone="9187777442", buy_coffe=5)
+    session.add(user)
+    assert await rq.get_buy_coffee(tg_id=10203040, session=session)
+
+    updated_user = await session.scalar(select(User).where(User.tg_id == 10203040))
+    assert updated_user.buy_coffe == 5
+
+
+@pytest.mark.asyncio
+async def test_get_user_by_phone(session: AsyncSession):
+    user = User(tg_id=10203040, phone="9187777442")
+    session.add(user)
+    assert await rq.get_user_by_phone(user.phone, session=session)
+    assert await session.scalar(select(User).where(User.phone == "9187777442"))
 
 
 @pytest.mark.asyncio
