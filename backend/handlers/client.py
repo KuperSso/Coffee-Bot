@@ -10,7 +10,8 @@ from filters import RegistrationFilter
 
 client_router = Router()
 
-
+tg_url = "https://t.me/Sakura_Michi_Coffe"
+inst_url = "https://www.instagram.com/sakura_michi__coffee?igsh=MWJqYmoyZ2JiaTNrZA=="
 # Приветствие клиенту
 
 
@@ -18,7 +19,14 @@ client_router = Router()
 async def cmd_start(message: types.Message, is_registered: bool):
     if is_registered:
         await message.answer(
-            f"<b>Sakura Michi приветствует Вас, {message.from_user.first_name}&#129303;\n\nМы очень стараемся, постоянно совершенствуя рецепты, согласно Японским традициям.\nЧтобы ваши вкусовые сосочки сказали нам СПАСИБО!\n\nВ данный момент у нас проходит АКЦИЯ&#9749;\nКупи 5 больших стаканов любого кофе и получи 6-ой В ПОДАРОК &#127873;</b>",
+            f"<b>Sakura Michi приветствует Вас, {message.from_user.first_name}&#129303;\n\n"
+            "Мы очень стараемся, постоянно совершенствуя рецепты.\n"
+            "Чтобы ваши вкусовые сосочки сказали нам СПАСИБО!\n\n"
+            "В данный момент у нас проходит АКЦИЯ&#9749;\n"
+            "Сделай 9 ЛЮБЫХ покупок и получи любой напиток на выбор В ПОДАРОК &#127873;\n\n"
+            "Так же можете ознакомится с нашими каналами, чтоб больше узнать о нас &#129505;\n"
+            f"<a href='{tg_url}'>Telegram</a>\n"
+            f"<a href='{inst_url}'>Instagram</a></b>",
             reply_markup=kb.menu_user,
         )
     else:
@@ -46,7 +54,14 @@ async def registration(msg: types.Message):
             await rq.add_user(msg.chat.id, formatted_number, session=session)
 
         await msg.answer(
-            f"<b>Sakura Michi приветствует Вас, {msg.from_user.first_name}&#129303;\n\nМы очень стараемся для, Вас, постоянно совершенствуя рецепты, согласно Японским традициям.\nЧтобы ваши вкусовые сосочки сказали нам СПАСИБО!\n\nВ данный момент у нас проходит АКЦИЯ&#9749;\nКупи 5 больших стаканов любого кофе и получи 6-ой В ПОДАРОК &#127873;</b>",
+            f"<b>Sakura Michi приветствует Вас, {msg.from_user.first_name}&#129303;\n\n"
+            "Мы очень стараемся, постоянно совершенствуя рецепты.\n"
+            "Чтобы ваши вкусовые сосочки сказали нам СПАСИБО!\n\n"
+            "В данный момент у нас проходит АКЦИЯ&#9749;\n"
+            "Сделай 9 ЛЮБЫХ покупок и получи любой напиток на выбор В ПОДАРОК &#127873;\n\n"
+            "Так же можете ознакомится с нашими каналами, чтоб больше узнать о нас &#129505;\n"
+            f"<a href='{tg_url}'>Telegram</a>\n"
+            f"<a href='{inst_url}'>Instagram</a></b>",
             reply_markup=kb.menu_user,
         )
 
@@ -62,14 +77,15 @@ async def my_profile(msg: types.Message):
     tg_id = msg.from_user.id
     async with async_session() as session:
         buy_coffee = await rq.get_buy_coffee(tg_id, session=session)
-    if buy_coffee < 5:
-        bonus_coffee = 5 - buy_coffee
+    if buy_coffee < 9:
+        bonus_coffee = 9 - buy_coffee
         await msg.answer(
-            f"<b>{msg.from_user.first_name}, вы купили: {buy_coffee} стакана(ов) &#9749;\n\nДо FREE COFFEE осталось: {bonus_coffee} стакана(ов) &#127873</b> "
+            f"<b>{msg.from_user.first_name}, вы совершили: {buy_coffee} покупок(-ки)&#128722;\n\n"
+            f"До FREE DRINK осталось: {bonus_coffee} покупок(-ки) &#127873</b> "
         )
     else:
         await msg.answer(
-            f"<b>{msg.from_user.first_name}, вы купили: {buy_coffee} стакана(ов) &#9749;\n\nПоздравляем, Вам доступен FREE COFFEE &#127873</b> "
+            f"<b>{msg.from_user.first_name}, вы совершили: {buy_coffee} покупок(-ки)&#128722;\n\nПоздравляем, Вам доступен FREE DRINK &#127873</b> "
         )
 
 

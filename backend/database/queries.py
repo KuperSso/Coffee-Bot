@@ -49,7 +49,7 @@ async def used_free_coffe(phone: str, session: AsyncSession) -> bool:
         if not user:
             return False
 
-        user.buy_coffe -= 5
+        user.buy_coffe -= 9
         await session.commit()
         return True
     except Exception as e:

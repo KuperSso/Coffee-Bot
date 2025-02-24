@@ -52,7 +52,7 @@ async def test_add_coffee(session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_used_free_coffee(session: AsyncSession):
-    user = User(tg_id=10203040, phone="9187777442", buy_coffe=5)
+    user = User(tg_id=10203040, phone="9187777442", buy_coffe=9)
     session.add(user)
 
     assert await rq.used_free_coffe(user.phone, session=session)

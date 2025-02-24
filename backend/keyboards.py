@@ -10,7 +10,7 @@ not_registered = ReplyKeyboardMarkup(
         ]
     ],
     resize_keyboard=True,
-    input_field_placeholder="Поделись скорей контактом, чтобы зарегистрироваться!",
+    input_field_placeholder="Поделись скорей контактом!",
 )
 
 menu_user = ReplyKeyboardMarkup(
@@ -22,13 +22,13 @@ menu_user = ReplyKeyboardMarkup(
         ]
     ],
     resize_keyboard=True,
-    input_field_placeholder="Тапни на кнопку для получения информации о своем счетчике!",
+    input_field_placeholder="Тапни на кнопку ниже!",
 )
 
 menu_admin = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="Добавить Кофе")],
-        [KeyboardButton(text="Выдать Бесплатный Кофе")],
+        [KeyboardButton(text="Добавить Покупку")],
+        [KeyboardButton(text="Выдать Бесплатный Напиток")],
         [KeyboardButton(text="Назад")],
     ],
     resize_keyboard=True,
@@ -41,8 +41,8 @@ menu_superuser = ReplyKeyboardMarkup(
             KeyboardButton(text="Удалить Баристу"),
         ],
         [
-            KeyboardButton(text="Добавить Кофе"),
-            KeyboardButton(text="Выдать Бесплатный Кофе"),
+            KeyboardButton(text="Добавить Покупку"),
+            KeyboardButton(text="Выдать Бесплатный Напиток"),
         ],
         [KeyboardButton(text="Назад")],
     ],

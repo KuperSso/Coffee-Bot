@@ -43,12 +43,12 @@ class CoffeeState(StatesGroup):
 
 
 @admin_router.message(
-    F.text == "Добавить Кофе",
+    F.text == "Добавить Покупку",
     IsadminFilter(),
 )
 async def start_add_coffee(message: types.Message, state: FSMContext):
     await message.answer(
-        "Для ДОБАВЛЕНИЯ КОФЕ пользователю:\nВведите номер телефона пользователя начиная с 8!\n(Пример: 89012345678)"
+        "Для ДОБАВЛЕНИЯ ПОКУПКИ пользователю:\nВведите номер телефона пользователя начиная с 8!\n(Пример: 89012345678)"
     )
     await state.set_state(CoffeeState.waiting_for_phone)
 
@@ -59,7 +59,7 @@ async def validate_phone(message: types.Message, state: FSMContext):
     if not normalized_phone:
         return
 
-    await message.answer("Введите количество купленных кофе:")
+    await message.answer("Введите количество ПОКУПОК:")
     await state.set_state(CoffeeState.waiting_for_buy_coffe)
 
 
@@ -70,7 +70,7 @@ async def process_coffee_count(message: types.Message, state: FSMContext):
         if buy_coffe <= 0:
             raise ValueError
     except ValueError:
-        await message.answer("Введите положительное число кофе.")
+        await message.answer("Введите положительное число.")
         return
 
     user_data = await state.get_data()
@@ -81,7 +81,7 @@ async def process_coffee_count(message: types.Message, state: FSMContext):
 
     if success:
         await message.answer(
-            f"Добавлено {buy_coffe} кофе для пользователя с номером {phone}."
+            f"Добавлено {buy_coffe} покупок для пользователя с номером {phone}."
         )
         async with async_session() as session:
             user = await rq.get_user_by_phone(phone, session=session)
@@ -89,19 +89,19 @@ async def process_coffee_count(message: types.Message, state: FSMContext):
             try:
                 log_message = (
                     f"Пользователю с номером {phone} "
-                    f"начислено {buy_coffe} кофе.\n"
-                    f"Текущий баланс: {user.buy_coffe} стакан(а)."
+                    f"начислено {buy_coffe} покупок.\n"
+                    f"Текущий баланс: {user.buy_coffe} покупок."
                 )
                 await send_log(message.bot, log_message)
                 await message.bot.send_message(
                     user.tg_id,
-                    f"<b>Вам начислено {buy_coffe} стакан(а) кофе.\nВаш текущий баланс: {user.buy_coffe} стакан(а).</b>",
+                    f"<b>Вам начислено {buy_coffe} покупок(-ки).\nВаш текущий баланс: {user.buy_coffe} покупок(-ки).</b>",
                 )
             except Exception as e:
                 await message.answer(f"Клиенту не удалось отправить уведомление: {e}")
     else:
         await message.answer(
-            f"Произошла ошибка при добавлении кофе для пользователя с номером {phone}."
+            f"Произошла ошибка при добавлении покупок для пользователя с номером {phone}."
         )
     await state.clear()
 
@@ -115,12 +115,12 @@ class FreeCoffeeStates(StatesGroup):
 
 
 @admin_router.message(
-    F.text == "Выдать Бесплатный Кофе",
+    F.text == "Выдать Бесплатный Напиток",
     IsadminFilter(),
 )
 async def start_used_coffee(message: types.Message, state: FSMContext):
     await message.answer(
-        "Для выдачи БЕСПЛАТНОГО КОФЕ:\nВедите номер телефона пользователя начиная с 8!\n(Пример: 89012345678)"
+        "Для выдачи БЕСПЛАТНОГО НАПИТКА:\nВедите номер телефона пользователя начиная с 8!\n(Пример: 89012345678)"
     )
     await state.set_state(FreeCoffeeStates.waiting_for_phone)
 
@@ -131,9 +131,9 @@ async def process_phone_check(message: types.Message, state: FSMContext):
     if not normalized_phone:
         return
     await message.answer(
-        f"Ты уверен, что хочешь выдать БЕСПЛАТНОЕ КОФЕ пользователю: {message.text.strip()}?\n\n"
+        f"Ты уверен, что хочешь выдать БЕСПЛАТНОЕ НАПИТОК пользователю: {message.text.strip()}?\n\n"
         f"Отправь любое слово - и я сразу выдам!\n\n"
-        f"Если ты ошибся, нажми на кнопку выдачи и начни сначала!"
+        f"Если ты ошибся, нажми на кнопку назад и начни сначала!"
     )
     await state.set_state(FreeCoffeeStates.confirming_usage)
 
@@ -150,10 +150,10 @@ async def process_coffee_used(message: types.Message, state: FSMContext):
         await state.clear()
         return
 
-    if user.buy_coffe < 5:
+    if user.buy_coffe < 9:
         await message.answer(
-            f"Недостаточно кофе для выдачи бесплатного стакана. "
-            f"На счету пользователя: {user.buy_coffe} стаканов."
+            f"Недостаточно покупок для выдачи бесплатного напитка. "
+            f"На счету пользователя: {user.buy_coffe} покупок."
         )
         await state.clear()
         return
@@ -161,15 +161,15 @@ async def process_coffee_used(message: types.Message, state: FSMContext):
         success = await rq.used_free_coffe(phone, session=session)
 
     if success:
-        await message.answer("Выдаю бесплатный кофе...")
+        await message.answer("Выдаю бесплатный напиток...")
         await message.answer(
-            f"Выдан бесплатный кофе для пользователя с номером {phone}. "
-            f"Оставшееся количество: {user.buy_coffe - 5}"
+            f"Выдан бесплатный напиток для пользователя с номером {phone}. "
+            f"Оставшееся количество: {user.buy_coffe - 9}"
         )
         try:
             await message.bot.send_message(
                 user.tg_id,
-                f"<b>Поздравляем, Вы получили БЕСПЛАТНЫЙ КОФЕ&#127873;\nВаш текущий баланс: {user.buy_coffe - 5} стакана(ов).</b>",
+                f"<b>Поздравляем, Вы получили FREE DRINK&#127873;\nВаш текущий баланс: {user.buy_coffe - 9} покупок(-ки).</b>",
             )
         except Exception as e:
             await message.answer(f"Клиенту не удалось отправить уведомление: {e}")
